@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+// Structure for stack
+struct Stack {
+    char data;
+    struct Stack* next;
+};
+// Function to create a new stack node
+struct Stack* newNode(char data) {
+    struct Stack* stackNode = (struct Stack*)malloc(sizeof(struct Stack));
+    stackNode->data = data;
+    stackNode->next = NULL;
+    return stackNode;
+}
+void push(struct Stack** stack, char data) {
+    struct Stack* stackNode = newNode(data);
+    stackNode->next = *stack;
+    *stack = stackNode;
+}
+char pop(struct Stack** stack) {
+    if (*stack == NULL)
+        return '\0';
+    struct Stack* temp = *stack;
+    *stack = (*stack)->next;
+    char popped = temp->data;
+    free(temp);
+    return popped;
+}
+bool areBracketsBalanced(const char* exp) 
+{
+    struct Stack* stack = NULL;
+    int len = strlen(exp);
+    for (int i = 0; i < len; i++) 
+    {
+        if (exp[i] == '{' || exp[i] == '(' || exp[i] == '[') 
+        {
+            push(&stack, exp[i]);
+        } 
+        else if (exp[i] == '}' || exp[i] == ')' || exp[i] == ']') 
+        {
+            if (stack == NULL)
+                return false;
+            char top = pop(&stack);
+            if ((exp[i] == '}' && top != '{') ||
+                (exp[i] == ')' && top != '(') ||
+                (exp[i] == ']' && top != '[')) 
+            {
+                return false;
+            }
+        }
+    }
+    return (stack == NULL);
+}
+int main() 
+{
+    const char* expression = "{[()]}";
+    if (areBracketsBalanced(expression)) 
+    {
+        printf("Brackets are balanced.\n");
+    }
+    else 
+    {
+        printf("Brackets are not balanced.\n");
+    }
+    return 0;
+}
+
