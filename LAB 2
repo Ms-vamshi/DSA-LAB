@@ -1,0 +1,63 @@
+#include <stdio.h>
+	#include <stdlib.h>
+
+	// Structure to represent an interval
+	struct Interval 
+	{
+    		int start;
+    		int end;
+	};
+
+	// Comparison function for sorting intervals based on start times
+	int compareIntervals(const void *a, const void *b) 
+	{
+    		return ((struct Interval *)a)->start - ((struct Interval *)b)->start;
+	}
+
+	// Function to merge overlapping intervals
+	void mergeIntervals(struct Interval intervals[], int n) 
+	{
+    		if (n <= 0)
+        	return;
+
+    	// Sort intervals based on start times
+    	qsort(intervals, n, sizeof(struct Interval), compareIntervals);
+
+   	// Initialize result as the first interval
+    	int resultIndex = 0;
+    	for (int i = 1; i < n; i++) 
+	{
+        	// If the current interval overlaps with the previous one
+        	if (intervals[resultIndex].end >= intervals[i].start) 
+		{
+            		// Merge the intervals
+            		intervals[resultIndex].end = intervals[i].end > intervals[resultIndex].end ? intervals[i].end : 					intervals[resultIndex].end;
+        	} 
+		else 
+		{
+            		// Disjoint intervals, add the current interval to the result
+            		resultIndex++;
+            		intervals[resultIndex] = intervals[i];
+        	}
+    	}
+
+    // Print the merged intervals
+    printf("Merged intervals:\n");
+    for (int i = 0; i <= resultIndex; i++) 
+	{
+        printf("[%d, %d] ", intervals[i].start, intervals[i].end);
+    	}
+    printf("\n");
+}
+
+int main() 
+	{
+    		// Example intervals
+    		struct Interval intervals[] = {{1, 3}, {2, 6}, {8, 10}, {15, 18}};
+    		int n = sizeof(intervals) / sizeof(intervals[0]);
+
+    		// Merge and print the result
+    		mergeIntervals(intervals, n);
+
+    		return 0;
+	}
